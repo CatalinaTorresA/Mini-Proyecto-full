@@ -1,0 +1,80 @@
+<div *ngIf="!loading; else cargando">
+  <h2>Lista de Usuarios</h2>
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Género</th>
+        <th>Rol</th>
+        <th>Tipo Doc</th>
+        <th>Número Doc</th>
+        <th>Acciones</th> 
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombres }}</td>
+        <td>{{ u.apellidos }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.telefono }}</td>
+        <td>{{ u.genero }}</td>
+        <td>{{ u.rol.nombre }}</td>
+        <td>{{ u.tipoDocumento.nombre }}</td>
+        <td>{{ u.numeroDoc }}</td>
+        <td>
+          <button (click)="editar(u)">Editar</button>
+          <button *ngIf="u.id !== undefined" (click)="eliminar(u.id!)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #cargando>
+  <p>Cargando usuarios...</p>
+</ng-template>
+
+<hr />
+
+<h2 *ngIf="!editando">Crear nuevo usuario</h2>
+<h2 *ngIf="editando">Editar usuario</h2>
+
+<form [formGroup]="formulario" (ngSubmit)="guardar()">
+  <input type="text" formControlName="nombres" placeholder="Nombres" required><br>
+  <input type="text" formControlName="apellidos" placeholder="Apellidos" required><br>
+  <input type="email" formControlName="email" placeholder="Correo electrónico" required><br>
+  <input type="text" formControlName="numeroDoc" placeholder="Número de documento" required><br>
+  <input type="text" formControlName="foto" placeholder="URL de la foto (opcional)"><br>
+
+  <select formControlName="genero" required>
+    <option value="" disabled selected>Seleccione género</option>
+    <option value="Femenino">Femenino</option>
+    <option value="Masculino">Masculino</option>
+    <option value="Otro">Otro</option>
+  </select><br>
+
+  <input type="text" formControlName="telefono" placeholder="Teléfono" required><br>
+
+  <select formControlName="rol" required>
+    <option value="" disabled selected>Seleccione un rol</option>
+    <option *ngFor="let rol of roles" [ngValue]="rol">{{ rol.nombre }}</option>
+  </select><br>
+
+  <select formControlName="tipoDocumento" required>
+    <option value="" disabled selected>Seleccione tipo de documento</option>
+    <option *ngFor="let tipo of tiposDocumento" [ngValue]="tipo">{{ tipo.nombre }}</option>
+  </select><br>
+
+  <button type="submit" [disabled]="formulario.invalid">
+    {{ editando ? 'Actualizar' : 'Guardar' }}
+  </button>
+</form>
+
+<p *ngIf="mensaje" style="color: green; font-weight: bold; margin-top: 10px;">
+  {{ mensaje }}
+</p>
